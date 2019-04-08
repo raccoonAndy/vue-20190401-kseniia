@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Vue project</title>
+
+    <style>
+        .is-hidden {
+            display: none;
+        }
+        span {
+            display: none;
+        }
+        span.active {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <h1>{{ title }} <span>{{ sumUsers }}</span></h1>
+    <table>
+        <tr v-for="users in list">
+            <td v-for="(user, key) in users" v-bind:key="user.id">
+                <div v-if="key === 'photo'">
+                    <img v-bind:src="renderPhoto(user)" alt="" style="max-width:100px;border-radius:50%;">
+                </div>
+                <div v-else>
+                    {{ user | capitalize }}
+                </div>
+
+            </td>
+        </tr>
+    </table>
+    <button v-on:click="toggleShowTable">
+        <span v-bind:class="{ active: !isActive }">Скрыть</span>
+        <span v-bind:class="{ active: isActive }">Показать</span>
+    </button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+
+<script>
+    const users = [
+        {
+            'firstname': 'ivan',
+            'lastname': 'Ivanov',
+            'seconname': 'Ivanovich',
+            'photo': 'https://cdn.dribbble.com/users/418188/screenshots/6191257/completist_digital_illustration_tubik_4x.png'
+        },
+        {
+            'firstname': 'Anna',
+            'lastname': 'Sergeeva',
+            'seconname': 'Petrovna',
+            'photo': ''
+        }
+    ];
+    const vm = new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                isActive: false,
+                title: 'Title header',
+                list: users,
+                counter: users.length
+            }
+        },
+        methods: {
+            renderPhoto: function (user) {
+                if (user !== '') {
+                    return user
+                } else {
+                    return 'https://cdn.dribbble.com/users/754899/screenshots/6176937/toucan.jpg';
+                }
+            },
+            counterUsers: function () {
+                if (!users) return;
+                return users.length;
+            },
+            toggleShowTable: function () {
+                const table = document.querySelector('table');
+                table.classList.toggle('is-hidden');
+                this.isActive = !this.isActive;
+            }
+        },
+        computed: {
+            sumUsers: function () {
+                return this.list.length
+            }
+        },
+        filters: {
+            capitalize: function (value) {
+                if (!value) return '';
+                value = value.toString();
+                return value.toUpperCase();
+            }
+        }
+    });
+</script>
+</body>
+</html>
