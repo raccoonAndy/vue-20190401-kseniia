@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:v-copy="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -17,6 +18,93 @@
         span.active {
             display: inline;
         }
+        .tooltip .tooltip-inner {
+            background: black;
+            color: white;
+            border-radius: 16px;
+            padding: 5px 10px 4px;
+        }
+
+        .tooltip .tooltip-arrow {
+            width: 0;
+            height: 0;
+            border-style: solid;
+            position: absolute;
+            margin: 5px;
+            border-color: black;
+        }
+
+        .tooltip[x-placement^="top"] {
+            margin-bottom: 5px;
+        }
+
+        .tooltip[x-placement^="top"] .tooltip-arrow {
+            border-width: 5px 5px 0 5px;
+            border-left-color: transparent !important;
+            border-right-color: transparent !important;
+            border-bottom-color: transparent !important;
+            bottom: -5px;
+            left: calc(50% - 5px);
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        .tooltip[x-placement^="bottom"] {
+            margin-top: 5px;
+        }
+
+        .tooltip[x-placement^="bottom"] .tooltip-arrow {
+            border-width: 0 5px 5px 5px;
+            border-left-color: transparent !important;
+            border-right-color: transparent !important;
+            border-top-color: transparent !important;
+            top: -5px;
+            left: calc(50% - 5px);
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        .tooltip[x-placement^="right"] {
+            margin-left: 5px;
+        }
+
+        .tooltip[x-placement^="right"] .tooltip-arrow {
+            border-width: 5px 5px 5px 0;
+            border-left-color: transparent !important;
+            border-top-color: transparent !important;
+            border-bottom-color: transparent !important;
+            left: -5px;
+            top: calc(50% - 5px);
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .tooltip[x-placement^="left"] {
+            margin-right: 5px;
+        }
+
+        .tooltip[x-placement^="left"] .tooltip-arrow {
+            border-width: 5px 0 5px 5px;
+            border-top-color: transparent !important;
+            border-right-color: transparent !important;
+            border-bottom-color: transparent !important;
+            right: -5px;
+            top: calc(50% - 5px);
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .tooltip[aria-hidden='true'] {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity .15s, visibility .15s;
+        }
+
+        .tooltip[aria-hidden='false'] {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity .15s;
+        }
     </style>
 </head>
 <body>
@@ -24,10 +112,10 @@
 <div id="app">
     <h1>{{ title }} <span>{{ sumUsers }}</span></h1>
     <table>
-        <tr v-for="users in list">
+        <tr v-for="users in list" v-copy="`copy text`" v-copy:callback="handleCopied">
             <td v-for="(user, key) in users" v-bind:key="user.id">
                 <div v-if="key === 'photo'">
-                    <img v-bind:src="renderPhoto(user)" alt="" style="max-width:100px;border-radius:50%;">
+                    <img v-bind:src="srcImage(user)" alt="" style="max-width:100px;border-radius:50%;">
                 </div>
                 <div v-else>
                     {{ user | capitalize }}
@@ -36,13 +124,15 @@
             </td>
         </tr>
     </table>
-    <button v-on:click="toggleShowTable">
+    <button v-on:click="toggleShowTable" v-tooltip="{ content: 'Нажмите, чтобы скрыть/отобразить элемент' }">
         <span v-bind:class="{ active: !isActive }">Скрыть</span>
         <span v-bind:class="{ active: isActive }">Показать</span>
     </button>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+<script src="https://unpkg.com/v-tooltip"></script>
+<script src="https://unpkg.com/v-copy@0.1.0/dist/v-copy.min.js"></script>
 
 <script>
     const users = [
@@ -70,7 +160,7 @@
             }
         },
         methods: {
-            renderPhoto: function (user) {
+            srcImage: function (user) {
                 if (user !== '') {
                     return user
                 } else {
@@ -85,6 +175,9 @@
                 const table = document.querySelector('table');
                 table.classList.toggle('is-hidden');
                 this.isActive = !this.isActive;
+            },
+            handleCopied: function () {
+                console.log('Copy')
             }
         },
         computed: {
