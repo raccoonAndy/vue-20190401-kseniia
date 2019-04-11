@@ -24,6 +24,7 @@
             <td>{{ item.name }}</td>
             <td>{{ item.username }}</td>
             <td>{{ item.email }}</td>
+            <td><a href="userForm.html">Edit</a></td>
         </tr>
     </table>
 </template>
@@ -55,7 +56,6 @@
                 axios.get('https://jsonplaceholder.typicode.com/users')
                     .then(response => this.list = response.data)
                     .catch(error => console.error(error))
-
             }
         }
     });
