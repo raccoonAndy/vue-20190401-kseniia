@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>User list</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<div id="app">
+<user-list :users="list"></user-list>
+</div>
+<template id="users">
+    <table class="table">
+        <tr>
+            <th>User Name</th>
+            <th>Nickname</th>
+            <th>Email</th>
+        </tr>
+        <tr v-for="item in users" :key="item.id">
+            <td>{{ item.name }}</td>
+            <td>{{ item.username }}</td>
+            <td>{{ item.email }}</td>
+        </tr>
+    </table>
+</template>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+<script>
+    const UsersList = {
+        template: '#users',
+        props: {
+            users: {
+                type: Array,
+                required: true
+            }
+        }
+    };
+    const vm = new Vue({
+        el: '#app',
+        data: {
+            list: []
+        },
+        components: {
+            'user-list': UsersList
+        },
+        mounted: function () {
+            this.loadUsers();
+        },
+        methods: {
+            loadUsers: function () {
+                axios.get('https://jsonplaceholder.typicode.com/users')
+                    .then(response => this.list = response.data)
+                    .catch(error => console.error(error))
+
+            }
+        }
+    });
+</script>
+</body>
+</html>
